@@ -11,8 +11,8 @@
 # **************************************************************************** #
 
 import argparse
-from .utils.parsing import parse_equation
-from .utils.reduce_polynom import reduce
+from utils.parsing import parse_equation
+from utils.reduce_polynom import reduce
 
 
 def computor(eq, verbose, fraction, graphic):
@@ -20,7 +20,7 @@ def computor(eq, verbose, fraction, graphic):
     eq = reduce(before, after)
 
 
-if __name__ == "__main__":
+def parsing():
     parser = argparse.ArgumentParser(description="Resolver of polynomial equations.")
     parser.add_argument(
         "expression",
@@ -48,5 +48,9 @@ if __name__ == "__main__":
         default=False,
         help="Show the equation in function",
     )
-    args = parser.parse_args()
+    return parser.parse_args()
+
+
+if __name__ == "__main__":
+    args = parsing()
     computor(args.expression, args.verbose, args.fraction, args.graphic)
