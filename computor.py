@@ -11,12 +11,16 @@
 # **************************************************************************** #
 
 import argparse
+from .utils.parsing import parse_equation
+from .utils.reduce_polynom import reduce
 
-from parsing import parse_equation
-from resolver import Solver
+
+def computor(eq, verbose, fraction, graphic):
+    before, after = parse_equation(eq)
+    eq = reduce(before, after)
 
 
-def main():
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Resolver of polynomial equations.")
     parser.add_argument(
         "expression",
@@ -37,16 +41,12 @@ def main():
         default=False,
         help="Show result in irreducible fraction",
     )
+    parser.add_argument(
+        "-g",
+        "--graphic",
+        action="store_true",
+        default=False,
+        help="Show the equation in function",
+    )
     args = parser.parse_args()
-    try:
-        reduce_form = parse_equation(args.expression)
-    except Exception as error:
-        print(error)
-    # try:
-    # Solver(args.verbose, args.fraction, args.expression, reduce_form)
-    # except Exception as error:
-    # print(error)
-
-
-if __name__ == "__main__":
-    main()
+    computor(args.expression, args.verbose, args.fraction, args.graphic)
