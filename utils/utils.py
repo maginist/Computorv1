@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    utils.py                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: maginist <maginist@student.42.fr>          +#+  +:+       +#+         #
+#    By: judumay <judumay@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/09/24 16:45:09 by maginist          #+#    #+#              #
-#    Updated: 2021/09/24 16:45:09 by maginist         ###   ########.fr        #
+#    Updated: 2021/10/06 14:01:45 by judumay          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ def print_error(arg, index, error):
         3: f"Syntax error: forbidden operation on the left side at index: {index}, you wrote '{arg}'.",
         4: f"Syntax error: forbidden operation on the right side at index: {index}, you wrote '{arg}'.",
         5: "Degree of the equation is too high.",
-        6: f"{arg}"
+        6: f"{arg}",
     }
     print(error_message.get(error))
     exit()
