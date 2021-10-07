@@ -1,59 +1,66 @@
 import re
-from .utils import print_error
-
-# cas possible :
-# a * x + b = c + x
-# a * x^1 + (b * x) + c = d
-# ax^2 + bx^1 + cx^0 + d = e + fx^2
-# 2(ax^2 + b) = c + x
-# (5 * X^0 + 4 * X^1 - 9.3 * X^2) = (1 * X^0)
+from utils.log import Logger
 
 
-def check_float(polylist):
-    tmp = ""
+def check_x(polylist, logger):
     for i in polylist:
-        if "." in i:
-            tmp = tmp + i
-    if tmp is None:
-        return 0
-    # floater = re.findall(r".[\.].", tmp)
-    # print(floater)
+        if i[0] == '*':
+            logger.error("A multiplicator is not well formated.")
+        for index in range(len(i)):
+            if index != len(i) - 1 and i[index] == ' ':
+                logger.error("A polynom is not well formated.") 
+            if i[index] == 'X' and index + 1 is True:
+                if i[index + 1] != '^' and i[index + 1] != ' ':
+                    logger.error("A polynom is not well formated.")
 
 
-def check_degree(polylist):
+def check_float(polylist, logger):
+    for i in polylist:
+        floater = 0
+        for index in range(len(i)):
+            if i[index] == ".":
+                floater = floater + 1
+                if index - 1 not in range(len(i)) or i[index - 1].isdigit() is False:
+                    logger.error("A float is not well formated.")
+                if index + 1 not in range(len(i)) or i[index + 1].isdigit() is False:
+                    logger.error("A float is not well formated.")
+            if floater > 1:
+                logger.error("Invalid float.")
+
+
+def check_degree(polylist, logger):
     tmp = ""
-    print(polylist)
     for i in polylist:
         if "^" in i:
             tmp = tmp + i
     power = re.findall(r"[X]\^[\d]+", tmp)
-    print(power)
     for i in power:
         degree = int(i[i.index("^") + 1:])
-        print(degree)
         if degree > 2:
-            print_error(0, 0, 5)
+            logger.error("Degree of the equation is too high.")
 
 
-def check_power(polylist, side):
+def check_power(polylist, logger):
     for i in polylist:
         if "^" in i:
             power = 0
             for index in range(len(i)):
                 if i[index] == "^":
+                    if i[index - 1] != 'X' and i[index - 1].isdigit() is False:
+                        logger.error("A power is not well formated.")
                     power = power + 1
-                    if index + 1 not in range(len(i)):
-                        print_error("A power is not well formated", 0, 6)
+                    if index + 1 not in range(len(i)) or i[index + 1].isdigit() is False:
+                        logger.error("A power is not well formated.")
                 if power > 1:
-                    print_error("You can't use more than one power on a polynom.", 0, 6)
+                    logger.error("You can't use more than one power on a polynom.")
 
 
-def check_separator(poly, side):
+def check_separator(poly, side, logger):
     sign = 1
     if poly[0] == " ":
         poly = re.sub(r"(^ )", "", poly)
     if poly[0] == "*":
-        print_error(poly[0], 0, side)
+        logger.error(poly[0], 0, side)
     if poly[0] == "+":
         poly = re.sub(r"^\+", "", poly)
     if side == 3:
@@ -61,29 +68,37 @@ def check_separator(poly, side):
     else:
         polylen = len(poly) - 1
     if poly[polylen] in "+-*":
-        print_error(poly[polylen], polylen, side)
+        if side == 3:
+            logger.error_parsing("forbidden operation on the left side ", polylen, poly[polylen])
+        else:
+            logger.error_parsing("forbidden operation on the right side ", polylen, poly[polylen])
     polylist = re.split(r"[+*-][^X]", poly)
-    separator = re.findall(r"[+*-][^X]", poly)
+    separator = re.findall(r"[+*-][^X^]", poly)
     if poly[0] == "-":
         polylist = re.split(r"[+*-][^X]", poly)[1:]
         sign = 0
     for i in polylist:
         if i == "":
-            print_error("do not use more than 1 operator within arguments", 0, 1)
+            logger.error("The equation is not well formated, do not use more than 1 operator within arguments.")
     if len(separator) + sign != len(polylist):
-        print_error("do not use more than 1 operator within arguments", 0, 1)
+        logger.error("The equation is not well formated,do not use more than 1 operator within arguments.")
     return polylist
 
 
-def check_poly(poly, side):
-    polylist = check_separator(poly, side)
-    check_power(polylist, side)
-    check_float(polylist)
-    check_degree(polylist)
+def check_poly(poly, side, logger):
+    polylist = check_separator(poly, side, logger)
+    check_power(polylist, logger)
+    check_float(polylist, logger)
+    check_degree(polylist, logger)
+    check_x(polylist, logger)
+    if poly[0] != '-':
+        poly = "+" + poly
+    polylist = re.findall(r"([+*-] [\d]*[.]?[\d]*[*]?[X]?[\^]?[0-2]?)", poly)
     return polylist
 
 
 def parse_equation(expression):
+    logger = Logger("Parsing", True)
     before, after = None, None
     expression = re.sub(r"(.)?([+-])(.)", r"\g<1> \g<2> \g<3>", expression)  # add space within +-
     expression = re.sub(
@@ -98,15 +113,15 @@ def parse_equation(expression):
     if expression[0] == " ":
         expression = re.sub(r"(^ )", "", expression)
     expression = expression.replace(r"x", r"X")
-    print("expression modified = ", expression)
     split = expression.split("=")
     if len(split) != 2:
-        print_error(0, 0, 0)
+        logger.error("Argument is not an equation.")
     before = split[0]
     after = split[1]
     for i, index in enumerate(expression):
         if index not in "0123456789.+-=* ^X":
-            print_error(index, i, 2)
-    polynomleft = check_poly(before, 3)
-    polynomrigth = check_poly(after, 4)
+            print(index)
+            logger.error_parsing("The equation is not well formated", i, index)
+    polynomleft = check_poly(before, 3, logger)
+    polynomrigth = check_poly(after, 4, logger)
     return polynomleft, polynomrigth

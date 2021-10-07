@@ -1,14 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    computor.py                                        :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: maginist <maginist@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2021/07/20 15:53:32 by maginist          #+#    #+#              #
-#    Updated: 2021/07/20 15:53:32 by maginist         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
 
 import argparse
 from utils.parsing import parse_equation
@@ -17,7 +6,7 @@ from utils.reduce_polynom import reduce
 
 def computor(eq, verbose, fraction, graphic):
     before, after = parse_equation(eq)
-    eq = reduce(before, after)
+    eq = reduce(before, after, verbose)
 
 
 def parsing():

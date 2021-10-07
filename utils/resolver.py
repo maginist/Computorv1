@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    resolver.py                                        :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: maginist <maginist@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2021/07/20 16:05:36 by maginist          #+#    #+#              #
-#    Updated: 2021/07/20 16:05:36 by maginist         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 # faire attention aux equations canoniques!
 class Solver:
     def __init__(self, verbose, fraction, expression):
