@@ -31,4 +31,5 @@ class Logger:
         exit()
 
     def debug(self, message, arg):
-        print(f"{GREEN}<{self.type}> debug: {END:6}{message} : {arg}")
+        if self.vb is True:
+            print(f"{GREEN}<{self.type}> debug: {END:6}{message} : {arg}")

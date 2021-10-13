@@ -2,11 +2,12 @@
 import argparse
 from utils.parsing import parse_equation
 from utils.reduce_polynom import reduce
+from utils.utils import create_polynom
 
-
-def computor(eq, verbose, fraction, graphic):
+def computor(eq, verbose, fraction, graphic, debug):
     before, after = parse_equation(eq)
-    eq = reduce(before, after, verbose)
+    create_polynom(before, after)
+    eq = reduce(before, after, verbose, debug)
 
 
 def parsing():
@@ -37,9 +38,16 @@ def parsing():
         default=False,
         help="Show the equation in function",
     )
+    parser.add_argument(
+        "-d",
+        "--debug",
+        action="store_true",
+        default=False,
+        help="Debug informations.",
+    )
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parsing()
-    computor(args.expression, args.verbose, args.fraction, args.graphic)
+    computor(args.expression, args.verbose, args.fraction, args.graphic, args.debug)

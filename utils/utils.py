@@ -1,4 +1,7 @@
 
+from utils.polynom import Polynom
+
+
 def print_error(arg, index, error):
     error_message = {
         0: "Syntax error: Argument is not an equation",
@@ -27,3 +30,8 @@ def sqrt(nb):
         x = y
         y = 0.5 * (x + nb / x)
     return y + 0
+
+def create_polynom(before, after):
+    polylist = []
+    # for i in before:
+    #     polylist.append(Polynom())
