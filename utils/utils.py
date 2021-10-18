@@ -33,5 +33,5 @@ def sqrt(nb):
 
 def create_polynom(before, after):
     polylist = []
-    # for i in before:
-    #     polylist.append(Polynom())
+    for i in before:
+        polylist.append(Polynom(i[0]))

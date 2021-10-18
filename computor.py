@@ -1,11 +1,13 @@
 
 import argparse
-from utils.parsing import parse_equation
 from utils.reduce_polynom import reduce
 from utils.utils import create_polynom
+from utils.parsing import Parsing
+
 
 def computor(eq, verbose, fraction, graphic, debug):
-    before, after = parse_equation(eq)
+    parsing = Parsing(verbose)
+    before, after = parsing.parse_equation(eq)
     create_polynom(before, after)
     eq = reduce(before, after, verbose, debug)
 

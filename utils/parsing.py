@@ -2,65 +2,72 @@ import re
 from utils.log import Logger
 from utils.polynom import Polynom
 
-def create_polynom(polynom):
-    print(polynom)
-    factor_tmp, power_tmp = "", ""
-    sign = polynom[0]
-    polynom = polynom[1:]
-    if 'X' in polynom:
-        factor_tmp, power_tmp = polynom.split('X', 1)
-        power_tmp = 'X' + power_tmp
-    else:
-        factor_tmp = polynom
-    factor = re.search(r"^\d+?\.?\d*[*]?$", factor_tmp)
-    print(factor_tmp, factor)
-    if factor is None and factor_tmp:
-        exit()
-    power = re.search(r"^X[\^][0-9]$|^X$", power_tmp)
-    print(power_tmp, power)
-    if power is None and power_tmp:
-        exit()
-    factor = factor.group(0).replace('*', '') if factor else 1
-    factor = float(factor) 
-    if power:
-        print(power.group(0))
-        power = re.sub(r"[X^]", "", power.group(0))
-    power = power if power else 0
-    print(power)
-    power = int(power)
-    return sign, factor, power
 
+class Parsing:
+    def __init__(self, vb=False):
+        self.vb = vb
+        self.logger = Logger("Parsing", self.vb)
 
-def create_polylist(poly):
-    polylist = []
-    if poly[0] != "-":
-        poly = '+' + poly
-    result = re.findall(r"[+-]?[0-9X^.* ]+", poly)
-    for polynom in result:
-        sign, factor, power = create_polynom(polynom)
-        polylist.append(Polynom(sign, factor, power))
-    return polylist
+    def create_polynom(self, polynom):
+        factor_tmp, power_tmp = "", ""
+        sign = polynom[0]
+        polynom = polynom[1:]
+        if 'X' in polynom:
+            factor_tmp, power_tmp = polynom.split('X', 1)
+            power_tmp = 'X' + power_tmp
+        else:
+            factor_tmp = polynom
+        factor = re.search(r"^\d+?\.?\d*[*]?$", factor_tmp)
+        if factor is None and factor_tmp:
+            self.logger.error("factor")
+        power = re.search(r"^X[\^][0-9]$|^X$", power_tmp)
+        if power is None and power_tmp:
+            self.logger.error("power")
+        factor = factor.group(0).replace('*', '') if factor else 1
+        try:
+            factor = int(factor)
+        except ValueError:
+            factor = float(factor)
+        if power and power.group(0) == "X":
+            power = 1
+        elif power:
+            power = int(re.sub(r"[X^]", "", power.group(0)))
+        else:
+            power = 0
+        return sign, factor, power
 
+    def create_polylist(self, poly):
+        polylist = []
+        if poly[0] != "-":
+            poly = '+' + poly
+        result = re.findall(r"[+-]?[0-9X^.* ]+", poly)
+        for polynom in result:
+            print(polynom)
+            sign, factor, power = self.create_polynom(polynom)
+            print(sign, factor, power)
+            test = Polynom(sign, factor, power)
+            polylist.append(test.sign)
+            polylist.append(test.factor)
+            polylist.append(test.power)
+        return polylist
 
-def cleaning_equation(eq):
-    eq = re.sub(r"\s+", "", eq)  # del all superfluous space
-    eq = eq.replace(r"x", r"X")
-    eq = re.sub(r"[+]+", '+', eq)
-    eq = re.sub(r"[\^]+", '^', eq)
-    eq = re.sub(r"[-]+", '-', eq)
-    eq = re.sub(r"[*]+", '*', eq)
-    return eq
+    def cleaning_equation(self, eq):
+        eq = re.sub(r"\s+", "", eq)  # del all superfluous space
+        eq = eq.replace(r"x", r"X")
+        eq = re.sub(r"[+]+", '+', eq)
+        eq = re.sub(r"[\^]+", '^', eq)
+        eq = re.sub(r"[-]+", '-', eq)
+        eq = re.sub(r"[*]+", '*', eq)
+        return eq
 
-
-def parse_equation(eq):
-    logger = Logger("Parsing", True)
-    for i, index in enumerate(eq):
-        if index not in "0123456789.+-=* ^Xx":
-            logger.error_parsing("The equation is not well formated", i, index)
-    eq = cleaning_equation(eq)
-    split = eq.split("=")
-    if len(split) != 2:
-        logger.error("Argument is not an equation.")
-    polynomleft = create_polylist(eq[:eq.index('=')])
-    polynomrigth = create_polylist(eq[eq.index('=') + 1:])
-    return polynomleft, polynomrigth
+    def parse_equation(self, eq):
+        for i, index in enumerate(eq):
+            if index not in "0123456789.+-=* ^Xx":
+                self.logger.error_parsing("The equation is not well formated", i, index)
+        eq = self.cleaning_equation(eq)
+        split = eq.split("=")
+        if len(split) != 2:
+            self.logger.error("Argument is not an equation.")
+        polynomleft = self.create_polylist(eq[:eq.index('=')])
+        polynomrigth = self.create_polylist(eq[eq.index('=') + 1:])
+        return polynomleft, polynomrigth
