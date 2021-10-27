@@ -2,7 +2,6 @@ import re
 from utils.log import Logger
 from utils.polynom import Polynom
 
-
 class Parsing:
     def __init__(self, vb=False):
         self.vb = vb
@@ -11,10 +10,12 @@ class Parsing:
     def create_polynom(self, polynom):
         factor_tmp, power_tmp = "", ""
         sign = polynom[0]
+        x = False
         polynom = polynom[1:]
         if 'X' in polynom:
             factor_tmp, power_tmp = polynom.split('X', 1)
             power_tmp = 'X' + power_tmp
+            x = True
         else:
             factor_tmp = polynom
         factor = re.search(r"^\d+?\.?\d*[*]?$", factor_tmp)
@@ -34,21 +35,16 @@ class Parsing:
             power = int(re.sub(r"[X^]", "", power.group(0)))
         else:
             power = 0
-        return sign, factor, power
+        return sign, factor, power, x
 
     def create_polylist(self, poly):
         polylist = []
         if poly[0] != "-":
             poly = '+' + poly
         result = re.findall(r"[+-]?[0-9X^.* ]+", poly)
-        for polynom in result:
-            print(polynom)
-            sign, factor, power = self.create_polynom(polynom)
-            print(sign, factor, power)
-            test = Polynom(sign, factor, power)
-            polylist.append(test.sign)
-            polylist.append(test.factor)
-            polylist.append(test.power)
+        for poly in result:
+            sign, factor, power, x = self.create_polynom(poly)
+            polylist.append(Polynom(sign, factor, power, x, poly))
         return polylist
 
     def cleaning_equation(self, eq):

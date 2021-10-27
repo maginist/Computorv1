@@ -15,6 +15,15 @@ def print_error(arg, index, error):
     print(error_message.get(error))
     exit()
 
+def get_degree(eq):
+    degree = 0
+    for i in eq:
+        if degree < i.power:
+            degree = i.power
+    print("Polynomial degree :", degree)
+    if degree > 2:
+        print_error(0, 0, 5)
+    return degree
 
 def abs(nb):
     if nb < 0:
@@ -30,8 +39,3 @@ def sqrt(nb):
         x = y
         y = 0.5 * (x + nb / x)
     return y + 0
-
-def create_polynom(before, after):
-    polylist = []
-    for i in before:
-        polylist.append(Polynom(i[0]))

@@ -1,15 +1,20 @@
 
 import argparse
+from utils.resolver import resolve
 from utils.reduce_polynom import reduce
-from utils.utils import create_polynom
+from utils.utils import get_degree
 from utils.parsing import Parsing
 
 
 def computor(eq, verbose, fraction, graphic, debug):
     parsing = Parsing(verbose)
     before, after = parsing.parse_equation(eq)
-    create_polynom(before, after)
+    if debug:
+        for i in before:
+            print("before: ", i.x, i.sign, i.factor, i.power, "line = ", i.line)
     eq = reduce(before, after, verbose, debug)
+    degree = get_degree(eq)
+    resolve(eq, degree, verbose)
 
 
 def parsing():
