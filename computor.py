@@ -1,8 +1,8 @@
 
 import argparse
-from utils.resolver import resolve
+from utils.resolver import Solver
 from utils.reduce_polynom import reduce
-from utils.utils import get_degree
+from utils.utils import get_degree, display_graph
 from utils.parsing import Parsing
 
 
@@ -14,7 +14,10 @@ def computor(eq, verbose, fraction, graphic, debug):
             print("before: ", i.x, i.sign, i.factor, i.power, "line = ", i.line)
     eq = reduce(before, after, verbose, debug)
     degree = get_degree(eq)
-    resolve(eq, degree, verbose)
+    solver = Solver(verbose, fraction, eq, degree)
+    solver.resolve()
+    if graphic is True:
+        display_graph(solver.eq)
 
 
 def parsing():
@@ -29,7 +32,7 @@ def parsing():
         "--verbose",
         action="store_true",
         default=False,
-        help="Show verbose and steps of resolution",
+        help="Show steps of resolution",
     )
     parser.add_argument(
         "-f",
