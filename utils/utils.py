@@ -42,7 +42,7 @@ def get_irreductible_fraction(nb):
     nb = nb / pgcd
     denominator = denominator / pgcd
     fraction = str(int(nb)) + '/' + str(int(denominator))
-    if nb == 0:
+    if nb == 0 or nb < 0 :
         fraction = "None"
     return fraction
 

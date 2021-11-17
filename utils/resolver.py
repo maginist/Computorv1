@@ -25,9 +25,12 @@ class Solver:
                 print(f"x1 = {-b} + {r_delta}/ 2 * {a}\nx2 = {-b} - {r_delta}/ 2 * {a}")
                 print(f"x1 = {self.solution[0]} & x2 = {self.solution[1]}")
             if self.fraction:
-                fraction1 = get_irreductible_fraction(self.solution[0])
-                fraction2 = get_irreductible_fraction(self.solution[1])
-                print(f"The solutions in irreductible fraction are : x1 = {fraction1}, x2 = {fraction2}")
+                if self.solution[0] > 0 and self.solution[1] > 0:
+                    fraction1 = get_irreductible_fraction(self.solution[0])
+                    fraction2 = get_irreductible_fraction(self.solution[1])
+                    print(f"The solutions in irreductible fraction are : x1 = {fraction1}, x2 = {fraction2}")
+                else:
+                    print("\n One or more number in the solutions is negative, no fraction is possible.")
             print(f"The solutions are x1 = {self.solution[0]} & x2 = {self.solution[1]}.")
         elif d == 0:
             self.solution[0] = -b/ (2 * a)
@@ -37,13 +40,18 @@ class Solver:
                 print(f"x1 = {-b} / 2 * {a}\n")
                 print(f"x = {self.solution[0]}")
             if self.fraction:
-                fraction1 = get_irreductible_fraction(self.solution[0])
-                print(f"The solution in irreductible fraction is : x = {fraction1}")
+                if self.solution[0] > 0:
+                    fraction1 = get_irreductible_fraction(self.solution[0])
+                    print(f"\nThe solution in irreductible fraction is : x = {fraction1}")
+                else:
+                    print("\nThe solution is negative, no fraction is possible.")
             print(f"The solution is x = {self.solution[0]}.")
         elif d < 0:
             print("The discriminant is negative, so there is two complexes solutions.")
             if self.verbose is True:
                 print(f"a = {a}, b = {b}, c = {c}, Δ = {d}\nx1 = -b + i√|Δ| / 2 * a \nx2 = -b - i√|Δ| / 2 * a")
+            if self.fraction is True:
+                print("\nWe can't convert the complexes solutions in irreductibles fractions.")
             print(f"\nThe two solutions are :\nx1 = ({-b} - i√{abs(d)}) / {2 * a}\nx2 = ({-b} + i√{abs(d)}) / {2 * a}")
 
     def degree_one(self, a, b):
@@ -54,8 +62,11 @@ class Solver:
             print(f"a = {a}, b = {b}")
             print(f"x = -b/a : x = {-b}/{a}\n")
         if self.fraction:
-            fraction = get_irreductible_fraction(res)
-            print(f"The solution in irreductible fraction is : x = {fraction}")
+            if res > 0:
+                fraction = get_irreductible_fraction(res)
+                print(f"The solution in irreductible fraction is : x = {fraction}")
+            else:
+                print("\nThe solution is negative, no fraction is possible.")
         print(f"The solution is : x = {res}")
 
     def resolve(self):
