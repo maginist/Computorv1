@@ -25,7 +25,7 @@ def parsing():
     parser.add_argument(
         "expression",
         type=str,
-        help="Input an unique string well formated as the equation (ex: 3*X^2 + 4*X^1 = 1*X^1 + 2)",
+        help="Input an unique string well formated as the equation (ex: '3*X^2 + 4*X^1 = 1*X^1 + 2')",
     )
     parser.add_argument(
         "-v",
